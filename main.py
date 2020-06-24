@@ -19,14 +19,12 @@ echo_handler = MessageHandler(Filters.text and (~Filters.command), echo)
 dispatcher.add_handler(echo_handler)
 
 # Capital what the user inputted after /caps
-# Note that the blank will be ignored
-# For example, "/caps hello, world" will be "HELLO,WORLD"
 def caps(update, context):
     text_caps = ' '.join(context.args).upper()
     context.bot.send_message(chat_id=update.effective_chat.id, text=text_caps)
 
 caps_handler = CommandHandler('caps', caps)
-dispatch.add_handler(caps_handler)
+dispatcher.add_handler(caps_handler)
 
 # Captial words using inline mode
 def inline_caps(update, context):
@@ -55,6 +53,8 @@ dispatcher.add_handler(unknown_handler)
 
 # To start the bot
 updater.start_polling()
+print("The bot is working.")
 
 # To end the bot
 updater.idle()
+print("The bot is stopped.")
