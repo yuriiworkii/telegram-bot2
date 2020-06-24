@@ -18,7 +18,7 @@ def echo(update, context):
 echo_handler = MessageHandler(Filters.text and (~Filters.command), echo)
 dispatcher.add_handler(echo_handler)
 
-# Capital what the user inputted after /caps
+# To capitalize what the user inputted after /caps
 def caps(update, context):
     text_caps = ' '.join(context.args).upper()
     context.bot.send_message(chat_id=update.effective_chat.id, text=text_caps)
@@ -26,7 +26,7 @@ def caps(update, context):
 caps_handler = CommandHandler('caps', caps)
 dispatcher.add_handler(caps_handler)
 
-# Captial words using inline mode
+# To captialize words using inline mode
 def inline_caps(update, context):
     query = update.inline_query.query
     if not query:
