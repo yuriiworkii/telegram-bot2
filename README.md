@@ -6,7 +6,7 @@ Since the tutorial is done in interactive mode, I think a sorted script might he
 
 ## config.ini
 
-You have to create a file called 'config.ini'.  
+You have to create a file called `config.ini`.  
 It should contain:
 ```
 [token]
