@@ -13,3 +13,7 @@ It should contain:
 key = {your-token}
 ```
 And make sure you do not sync it to the Internet or anywhere that you cannot handle.
+
+### token
+
+Talk to [BotFather](https://t.me/BotFather) and get your own token.
