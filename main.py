@@ -1,39 +1,39 @@
-from telegram.ext import Updater, CommandHandler, MessageHandler, InlineQueryHandler, Filters
-from telegram import InlineQueryResultArticle, InputTextMessageContent
+from telegram import InlineQueryResultArticle, InputTextMessageContent, Update
+from telegram.ext import Application, CommandHandler, MessageHandler, InlineQueryHandler, filters
 from configparser import ConfigParser
 
-# Ref: http://fygul.blogspot.com/2017/07/configparser.html
+# Читання токену з конфігураційного файлу
 cfg = ConfigParser()
 cfg.read('config.ini')
 token = cfg['token']['key']
 
-updater = Updater(token=token, use_context=True)
-dispatcher = updater.dispatcher
+# Створення екземпляру Application
+application = Application.builder().token(token).build()
 
-# To catch commands like "/start"
-def start(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text="I'm a bot, please talk to me!")
+# Функція для команди /start
+async def start(update: Update, context):
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="I'm a bot, please talk to me!")
 
 start_handler = CommandHandler('start', start)
-dispatcher.add_handler(start_handler)
+application.add_handler(start_handler)
 
-# To repeat what the user said
-def echo(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text=update.message.text)
+# Функція для повторення тексту, який відправив користувач
+async def echo(update: Update, context):
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=update.message.text)
 
-echo_handler = MessageHandler(Filters.text and (~Filters.command), echo)
-dispatcher.add_handler(echo_handler)
+echo_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), echo)
+application.add_handler(echo_handler)
 
-# To capitalize what the user inputted after /caps
-def caps(update, context):
+# Функція для команди /caps
+async def caps(update: Update, context):
     text_caps = ' '.join(context.args).upper()
-    context.bot.send_message(chat_id=update.effective_chat.id, text=text_caps)
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=text_caps)
 
 caps_handler = CommandHandler('caps', caps)
-dispatcher.add_handler(caps_handler)
+application.add_handler(caps_handler)
 
-# To captialize words using inline mode
-def inline_caps(update, context):
+# Функція для inline режиму
+async def inline_caps(update: Update, context):
     query = update.inline_query.query
     if not query:
         return
@@ -45,22 +45,18 @@ def inline_caps(update, context):
             input_message_content=InputTextMessageContent(query.upper())
         )
     )
-    context.bot.answer_inline_query(update.inline_query.id, results)
+    await context.bot.answer_inline_query(update.inline_query.id, results)
 
 inline_caps_handler = InlineQueryHandler(inline_caps)
-dispatcher.add_handler(inline_caps_handler)
+application.add_handler(inline_caps_handler)
 
-# Unknown commands
-def unknown(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text="Sorry, I didn't understand that command.")
+# Функція для невідомих команд
+async def unknown(update: Update, context):
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="Sorry, I didn't understand that command.")
 
-unknown_handler = MessageHandler(Filters.command, unknown)
-dispatcher.add_handler(unknown_handler)
+unknown_handler = MessageHandler(filters.COMMAND, unknown)
+application.add_handler(unknown_handler)
 
-# To start the bot
-updater.start_polling()
-print("The bot is working.")
-
-# To end the bot
-updater.idle()
-print("The bot is stopped.")
+# Запуск бота
+if __name__ == '__main__':
+    application.run_polling()
